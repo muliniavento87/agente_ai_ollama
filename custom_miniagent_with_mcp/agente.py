@@ -8,6 +8,12 @@ from server import AVAILABLE_TOOLS, get_openai_tools_definition
 
 debug = False
 
+addr_edge0_server = '127.0.0.1:8080'
+addr_ollama_server = '127.0.0.1:11434'
+
+server_addr = addr_edge0_server
+
+
 # Il catalogo viene generato al volo dal server
 tools_definition = get_openai_tools_definition()
 
@@ -84,7 +90,7 @@ while True:
                     })
                     
                     # Seconda chiamata per ottenere la risposta finale testuale
-                    final_response = requests.post("http://127.0.0.1:8080/v1/chat/completions", json={
+                    final_response = requests.post(f"http://{server_addr}/v1/chat/completions", json={
                         "model": "edge0-35b",
                         "messages": messages
                     })

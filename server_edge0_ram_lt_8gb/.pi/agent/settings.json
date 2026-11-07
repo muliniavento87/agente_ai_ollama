@@ -1,0 +1,10 @@
+{
+  "OLDdefaultModel": "Ornith-1.5-9B-Q4-8k",
+  "OLDdefaultProvider": "ollama",
+  "defaultModel": "edge0-35b",
+  "defaultProvider": "edge0",
+  "httpIdleTimeoutMs": 0,
+  "compaction": {
+    "enabled": false
+  }
+}
