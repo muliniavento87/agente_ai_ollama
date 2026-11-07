@@ -1,0 +1,52 @@
+{
+    "providers": {
+        "ollama": {
+            "old": "http://192.168.1.173:11434/v1",
+            "baseUrl": "http://host.docker.internal:11434/v1",
+            "api": "openai-completions",
+            "apiKey": "ollama",
+            "models": [
+                {
+                    "id": "Qwen3.6-35B-A3B-Q4-K-M-32k",
+                    "contextWindow": 32768,
+                    "maxTokens": 32768,
+                    "input": ["text", "image"]
+                },
+                {
+                    "id": "lfm2.5-32k",
+                    "contextWindow": 32768,
+                    "maxTokens": 32768
+                },
+                {
+                    "id": "Saluki-27b-IQ2-32k",
+                    "contextWindow": 32768,
+                    "maxTokens": 32768
+                },
+                {
+                    "old": "8192-32768",
+                    "id": "Ornith-1.5-9b-Q4-K-M-32k",
+                    "contextWindow": 32768,
+                    "maxTokens": 32768
+                },
+                {
+                    "id": "Ornith-1.5-9b-IQ3-M-8k",
+                    "contextWindow": 8192,
+                    "maxTokens": 8192
+                }
+            ]
+        },
+        "edge0": {
+            "baseUrl": "http://host.docker.internal:8080/v1",
+            "api": "openai-completions",
+            "apiKey": "edge0",
+            "models": [
+                {
+                    "id": "edge0-35b",
+                    "contextWindow": 32768,
+                    "maxTokens": 32768,
+                    "input": ["text"]
+                }
+            ]
+        }
+    }
+}
