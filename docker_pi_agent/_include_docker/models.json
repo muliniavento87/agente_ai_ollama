@@ -47,6 +47,19 @@
                     "input": ["text"]
                 }
             ]
+        },
+        "freetoken": {
+            "baseUrl": "http://192.168.1.173:1919/v1",
+            "api": "openai-completions",
+            "apiKey": "freetoken",
+            "models": [
+                {
+                    "id": "Qwen3.6-35B-A3B-NVFP4",
+                    "contextWindow": 32768,
+                    "maxTokens": 32768,
+                    "input": ["text", "image"]
+                }
+            ]
         }
     }
 }
