@@ -11,7 +11,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
       bash ca-certificates curl wget \
       git git-lfs openssh-client \
       python3 python3-pip python3-venv build-essential pkg-config \
-      jq ripgrep fd-find tree unzip xz-utils file procps lsof iproute2 \
+      jq ripgrep fd-find tree unzip xz-utils file \
+      procps lsof iproute2 \
+      bubblewrap socat \
     && rm -rf /var/lib/apt/lists/* \
     && ln -s "$(command -v fdfind)" /usr/local/bin/fd
 
@@ -32,6 +34,7 @@ COPY models.json /root/.pi/agent/models.json
 COPY settings.json /root/.pi/agent/settings.json
 COPY auth.json /root/.pi/agent/auth.json
 COPY mcp.json /root/.pi/agent/mcp.json
+COPY sandbox.json /root/.pi/agent/sandbox.json
 
 # (Pi Agent) plugin:
 #   - mostra token al secondo
@@ -47,7 +50,9 @@ COPY mcp.json /root/.pi/agent/mcp.json
 #   - pi-mcp-adapter (tools mcp)
 #    pi install npm:pi-mcp-adapter
 RUN pi install https://github.com/gsanhueza/pi-token-speed && \
-    pi install npm:pi-atelier
+    pi install npm:pi-atelier && \
+    pi install npm:pi-sandbox && \
+    pi install npm:pi-mcp-extension
 
 # Integrazione Skill mattpocock
 RUN git clone https://github.com/mattpocock/skills.git /root/.pi/agent/skills/mattpocock || true
