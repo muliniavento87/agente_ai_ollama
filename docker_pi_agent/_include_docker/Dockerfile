@@ -47,8 +47,6 @@ COPY sandbox.json /root/.pi/agent/sandbox.json
 #    pi install npm:pi-hermes-memory
 #   - context-mode (gestione contesto, in automatico riduce l'occupazione)
 #    pi install npm:context-mode
-#   - pi-mcp-adapter (tools mcp)
-#    pi install npm:pi-mcp-adapter
 RUN pi install https://github.com/gsanhueza/pi-token-speed && \
     pi install npm:pi-atelier && \
     pi install npm:pi-sandbox && \
@@ -62,4 +60,5 @@ RUN git config --global --add safe.directory '*' && \
     git config --global user.name "Pi Agent" && \
     git config --global user.email "pi-agent@local.dev"
 
-WORKDIR /workspace
+# WORKDIR /scripts
+ WORKDIR /workspace
