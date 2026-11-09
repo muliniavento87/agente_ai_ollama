@@ -14,7 +14,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
       jq ripgrep fd-find tree unzip xz-utils file \
       procps lsof iproute2 \
       bubblewrap socat \
-    && rm -rf /var/lib/apt/lists/* \
+    && rm -rf /var/lib/lists/* \
     && ln -s "$(command -v fdfind)" /usr/local/bin/fd
 
 # Installazione di huggingface CLI[cite: 1]
@@ -34,7 +34,7 @@ COPY models.json /root/.pi/agent/models.json
 COPY settings.json /root/.pi/agent/settings.json
 COPY auth.json /root/.pi/agent/auth.json
 COPY mcp.json /root/.pi/agent/mcp.json
-COPY sandbox.json /root/.pi/agent/sandbox.json
+#COPY sandbox.json /root/.pi/agent/sandbox.json
 
 # (Pi Agent) plugin:
 #   - mostra token al secondo
@@ -49,7 +49,7 @@ COPY sandbox.json /root/.pi/agent/sandbox.json
 #    pi install npm:context-mode
 RUN pi install https://github.com/gsanhueza/pi-token-speed && \
     pi install npm:pi-atelier && \
-    pi install npm:pi-sandbox && \
+    # pi install npm:pi-sandbox && \
     pi install npm:pi-mcp-extension
 
 # Integrazione Skill mattpocock
@@ -61,4 +61,4 @@ RUN git config --global --add safe.directory '*' && \
     git config --global user.email "pi-agent@local.dev"
 
 # WORKDIR /scripts
- WORKDIR /workspace
+WORKDIR /workspace
