@@ -1,20 +1,35 @@
 import os
 from pathlib import Path
-from datetime import datetime
+from datetime import datetime, timezone
 from zoneinfo import ZoneInfo
 from mcp.server.mcpserver import MCPServer
 
 # Base directory assoluta e sicura per il server MCP
-#BASE_DIR = Path(os.path.dirname(os.path.abspath(__file__)))
 #BASE_DIR = Path.cwd()
-BASE_DIR = Path(__file__).resolve().parent.parent # / 'p'
+#BASE_DIR = Path(__file__).resolve().parent.parent / 'p'
+#BASE_DIR = Path(os.path.dirname(os.path.abspath(__file__)))
+#BASE_DIR = Path(__file__).resolve().parent.parent # ora punta a "/"
+BASE_DIR = Path("/").resolve()
+
+# files
+DIR_WORKSPACE = 'workspace'
+DIR_METADATI = 'workspace_metadati'
+FILE_LOG_MCP = 'LOG_TOOLS_MCP.md'
+FILE_TASK_IN_CORSO = 'TASK_IN_CORSO.md'
+FILE_TASK_TERMINATI = 'TASK_TERMINATI.md'
+# paths
+PATH_DIR_WORKSPACE = BASE_DIR / DIR_WORKSPACE
+PATH_DIR_METADATI = BASE_DIR / DIR_METADATI
+PATH_FILE_LOG_MCP = BASE_DIR / DIR_METADATI / FILE_LOG_MCP
+PATH_FILE_TASK_IN_CORSO = BASE_DIR / DIR_METADATI / FILE_TASK_IN_CORSO
+PATH_FILE_TASK_TERMINATI = BASE_DIR / DIR_METADATI / FILE_TASK_TERMINATI
 
 mcp = MCPServer("Miei Tool Locali")
 
 def _log_tools_mcp(name: str, t: str):
     timestamp = datetime.now(ZoneInfo("Europe/Rome")).strftime("%Y.%m.%d_%H.%M")
     # CRITICO CORRETTO: Uso del path assoluto anche per i log
-    log_file = BASE_DIR / "metadati_loop" / ".LOG_TOOLS_MCP.md"
+    log_file = PATH_FILE_LOG_MCP #BASE_DIR / "metadati_loop" / ".LOG_TOOLS_MCP.md"
     log_file.parent.mkdir(parents=True, exist_ok=True)
     if not log_file.exists():
         log_file.write_text("", encoding="utf-8")
@@ -31,9 +46,9 @@ def _read_lines(filepath: Path) -> list[str]:
     return [line.rstrip("\n") for line in content.splitlines()]
 
 def _write_lines(filepath: Path, lines: list[str]):
-    """Scrive le righe nel file unendole con \n e forza la scrittura fisica su disco."""
+    """Scrive le righe nel file unendole con \n senza aggiungere un newline finale."""
     filepath.parent.mkdir(parents=True, exist_ok=True)
-    content = "\n".join(lines) + ("\n" if lines else "")
+    content = "\n".join(lines)  # Nessun + ("\n" if lines else "")
     with open(filepath, "w", encoding="utf-8") as f:
         f.write(content)
         f.flush()
@@ -43,47 +58,45 @@ def _write_lines(filepath: Path, lines: list[str]):
 def crea_task_diario(testo: str) -> str:
     """
     Crea UN UNICO task nel diario per sessione. 
-    Se il task esiste già, restituisce l'ID corrente senza generare errori bloccanti.
+    Se il task esiste già, restituisce un errore bloccante e non crea nulla.
     
     Args:
         testo: La descrizione del progetto che vuoi creare.
 
     Results:
-        id task/cartella creata.
+        id task creato o messaggio di errore se esiste già un task attivo.
     """
     _log_tools_mcp('crea_task_diario', testo)
     
-    meta_dir = BASE_DIR / "metadati_loop"
-    terminati_path = meta_dir / ".DIARIO_MANUALE_TERMINATI.md"
-    attivi_path = meta_dir / ".DIARIO_MANUALE.md"
-
-    meta_dir.mkdir(parents=True, exist_ok=True)
-    if not terminati_path.exists():
-        terminati_path.write_text("", encoding="utf-8")
-    if not attivi_path.exists():
-        attivi_path.write_text("", encoding="utf-8")
+    terminati_path = PATH_FILE_TASK_TERMINATI
+    attivi_path = PATH_FILE_TASK_IN_CORSO
 
     terminati_lines = _read_lines(terminati_path)
     index = len(terminati_lines)
     
-    # 1. Crea SEMPRE la cartella corrispondente all'indice per evitare che non venga generata
-    task_dir = BASE_DIR / str(index)
-    task_dir.mkdir(parents=True, exist_ok=True)
-    
-    # 2. Legge lo stato attivo
+    # 1. Legge lo stato attivo prima di fare qualsiasi cosa
     attivi_lines = _read_lines(attivi_path)
     
-    # 3. Se non è attivo, lo registra. Se è già attivo, evita di duplicarlo ma procede comunque.
-    if not attivi_lines:
-        timestamp = datetime.now().strftime("%Y.%m.%d_%H.%M")
-        record = f"[{timestamp}] {testo}"
-        attivi_lines.append(record)
-        _write_lines(attivi_path, attivi_lines)
-        _log_tools_mcp('crea_task_diario (nuovo ID)', str(index))
-    else:
-        _log_tools_mcp('crea_task_diario (già esistente, recuperato ID)', str(index))
+    # 2. SE ESRA GIÀ UN TASK ATTIVO -> BLOCCO E RESTITUISCO UN ERRORE ESPLICITO ALL'LLM
+    if attivi_lines:
+        task_corrente = attivi_lines[0]
+        _log_tools_mcp('crea_task_diario (RIFIUTATO - task già esistente)', task_corrente)
+        return (
+            f"ERRORE OPERATIVO: Impossibile creare un nuovo task perché ne esiste già uno in corso: '{task_corrente}'. "
+            f"Non devi chiamare 'crea_task_diario'. Lavora con il task esistente o usa 'completa_task_diario' "
+            f"se hai finito. Procedi utilizzando il task attuale."
+        )
     
-    # Restituisce SEMPRE l'ID pulito (es. "0"), permettendo al modello di proseguire
+    # 3. Se non è attivo, procede alla creazione della cartella e del record
+    task_dir = PATH_DIR_WORKSPACE / str(index)
+    task_dir.mkdir(parents=True, exist_ok=True)
+    
+    timestamp = datetime.now().strftime("%Y.%m.%d_%H.%M")
+    record = f"[{timestamp}] {testo}"
+    attivi_lines.append(record)
+    _write_lines(attivi_path, attivi_lines)
+    _log_tools_mcp('crea_task_diario (nuovo ID)', str(index))
+    
     return str(index)
 
 @mcp.tool()
@@ -96,8 +109,8 @@ def task_diario_non_terminato() -> list:
     """
     _log_tools_mcp('task_diario_non_terminato', '')
 
-    attivi_path = BASE_DIR / "metadati_loop" / ".DIARIO_MANUALE.md"
-    terminati_path = BASE_DIR / "metadati_loop" / ".DIARIO_MANUALE_TERMINATI.md"
+    terminati_path = PATH_FILE_TASK_TERMINATI
+    attivi_path = PATH_FILE_TASK_IN_CORSO
     
     lines = _read_lines(attivi_path)
     if not lines:
@@ -115,8 +128,8 @@ def completa_task_diario() -> None:
     """
     _log_tools_mcp('completa_task_diario', '')
 
-    attivi_path = BASE_DIR / "metadati_loop" / ".DIARIO_MANUALE.md"
-    terminati_path = BASE_DIR / "metadati_loop" / ".DIARIO_MANUALE_TERMINATI.md"
+    terminati_path = PATH_FILE_TASK_TERMINATI #meta_dir / ".DIARIO_MANUALE_TERMINATI.md"
+    attivi_path = PATH_FILE_TASK_IN_CORSO #meta_dir / ".DIARIO_MANUALE.md"
     
     attivi_lines = _read_lines(attivi_path)
     if not attivi_lines:
@@ -130,8 +143,6 @@ def completa_task_diario() -> None:
     terminati_lines = _read_lines(terminati_path)
     terminati_lines.append(first_line)
     _write_lines(terminati_path, terminati_lines)
-    
-    return
 
 if __name__ == "__main__":
     mcp.run()

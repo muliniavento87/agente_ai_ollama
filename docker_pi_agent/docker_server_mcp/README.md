@@ -19,7 +19,7 @@ python3 server.py
 ## Integrazione Pi Agent
 - Installa l'adattatore MCP per Pi Agent
 ```bash
-pi install npm:pi-mcp-adapter
+pi install npm:pi-mcp-extension
 ```
 - crea configurazione globale per i server MCP (in automatico Pi AGent creerà il catalogo di funzionalità da fornire a Qwen)
 ```bash

@@ -5,37 +5,83 @@ import json
 import datetime
 import subprocess
 import time
-import os
 from pathlib import Path
+import os
+import shutil
+
 
 C_INDEX = 99999999999 # 9
 C_N_TRY = 99999999999 # 5
-C_LOG_FILE = "metadati_loop/LOOP_log.md"
-C_CURRENT_PROMPT = "metadati_loop/LOOP_prompt.md"
+
+C_DIR_METADATI = Path("/workspace_metadati")
+C_FILE_LOG = "LOOP_log.md"
+C_FILE_CURRENT_PROMPT = "LOOP_prompt.md"
+C_PATH_FILE_LOG = C_DIR_METADATI / C_FILE_LOG
+C_PATH_FILE_CURRENT_PROMPT = C_DIR_METADATI / C_FILE_CURRENT_PROMPT
+
 
 C_PROMPT_UTENTE = """
-CRITICO: Se un tool specifico non appare nella lista iniziale, usa sempre codemode con searchTools() per cercarlo prima di dichiarare che non è disponibile. Ogni tool può essere eseguito SOLO una volta per sessione.
+Crea una cartella "MINI_GAME" e creaci dentro un minigioco in html+js semplice ma graficamente ben curato.
 
-## Obiettivo
-Esegui i passaggi seguenti in modo sequenziale e solo 1 volta per passaggio:
-1. Chiama il tool "task_diario_non_terminato" e riceverai un risultato "X_1".
-2. Bivio in base al valore di "X_1":
-    - Se "X_1" è un array con almeno 2 elementi recupera il primo elemento che sarà "X_2_id" (stringa) e il secondo elemento che sarà "X_2_descr" (stringa).
-    - Altrimenti se "X_1" è un array vuoto, scegli a piacere uno sviluppo, crea una descrizione DESCR sintetica di cosa farà (max 200 parole), chiama il tool "crea_task_diario" (con questa descrizione DESCR) e riceverai un risultato "X_2_id" (stringa).
-3. Se "X_1" era un array con almeno 2 elementi, vuol dire che c'è uno sviluppo già esistente nella cartella "X_2_id", troverai nel "README.md" di quella cartella i dettagli per proseguire e "X_2_descr" sarà un breve riassunto dello scopo di quello sviluppo.
+Dentro la cartella crea:
+- un repository dove committerai tutti gli interventi fino al termine lo sviluppo.
+- un "README.md" per raccontare in massimo 200 parole, che gioco è e come si gioca (se non basta un doppio click per avviarlo spiega come avviarlo ed eventuali dipendenze).
+- un file vuoto "TERMINATO_OK" (SOLO quando hai terminato tutto).
 
-## Regole per nuovi sviluppi
-Se devi creare un nuovo sviluppo:
-1. Scegli qualcosa di molto semplice e banale ma esteticamente curato.
-2. Realizzalo con una o entrambe le tecnologie "Python" e/o "NodeJS".
-3. IMPORTANTE: Inizializza un repository GIT nella cartella "X_2_id" recuperata dai tools.
-4. IMPORTANTE: Sviluppa solo ed esclusivamente nella cartella "X_2_id", crea dentro un "README.md" con l'obiettivo e i dettagli tecnici dello sviluppo.
-
-## Regole generali
-1. IMPORTANTE: Ogni intervento sul progetto deve essere seguito da un commit su GIT per registrare le modifiche.
-2. IMPORTANTE: Quando hai terminato lo sviluppo chiama il tool "completa_task_diario" e rispondi all'utente.
+ATTENZIONE: quando hai terminato rispondi con "Sviluppo terminato".
 """
 
+C_PROMPT_UTENTE = """
+Crea una cartella "MINI_GAME_3D" e creaci dentro un minigioco in html+js semplice ma in 3D e graficamente ben curato.
+
+Dentro la cartella crea:
+- un repository dove committerai tutti gli interventi fino al termine lo sviluppo.
+- un "README.md" per raccontare in massimo 200 parole, che gioco è e come si gioca (se non basta un doppio click per avviarlo spiega come avviarlo ed eventuali dipendenze).
+- un file vuoto "TERMINATO_OK" (SOLO quando hai terminato tutto).
+
+ATTENZIONE: quando hai terminato rispondi con "Sviluppo terminato".
+"""
+
+C_PROMPT_UTENTE = """
+$C_PROMPT_UTENTE_CREA
+CRITICO: $C_INIT_OR_RECOVER.
+
+Dentro la cartella "MINI_GAME_3D_V2" crea:
+- repository GIT (se non già presente) dove committerai tutti gli interventi fino al termine lo sviluppo.
+- "README.md" per raccontare in massimo 200 parole, che gioco è, il genere, come si gioca e come si avvia (eventuali dipendenze da installare).
+
+ATTENZIONE: al termine dello sviluppo fai dei test statici e verifica eventuali errori di sintassi. Quando hai finito rispondi con "Sviluppo terminato".
+"""
+
+C_PROMPT_UTENTE_CREA = """
+Crea una cartella "MINI_GAME_3D_V2" e creaci dentro un minigioco in html+js semplice ma in 3D e graficamente molto ben curato.
+Il genere del gioco 3D da sviluppare DEVE ESSERE "$C_GENERE_GIOCO".
+"""
+
+C_PROMPT_UTENTE_INIT = """Prima di tutto crea "CONTEXT.md" in "MINI_GAME_3D_V2", dove inserisci il genere del gioco e una brevissima idea di cosa vuoi sviluppare (fondamentali per riprendere lo sviluppo, se dovesse interrompersi bruscamente)"""
+
+C_PROMPT_UTENTE_RECOVER = """Il tuo sviluppo si è interrotto bruscamente in corso d'opera. Prova a recuperare le informazioni da "CONTEXT.md" nella cartella "MINI_GAME_3D_V2" per continuare quello che stavi facendo."""
+
+C_GENERI_GIOCHI = [
+    "Endless Runner",
+    "Platformer 3D (openspace, es. 'Super Mario 64')",
+    "Puzzle / Fisica",
+    "Turret / Dodge",
+    "Mini Sports (es. 'Pong/Bowling/MicroGolf')",
+    "Rhythm Lane (es. 'Guitar Hero')",
+    "Idle / Clicker 3D",
+    "Stealth / Evasione",
+    "Micro Tower Defense",
+    "Fishing / Catch",
+    "First-Shooter",
+    "Minicorsa con kart (es. 'Super Mario Kart')"
+]
+
+C_GENERI_GIOCHI = [
+    "Mini Sports (mini-golf)",
+    "Mini Sports (mini-soccer)",
+    "Mini Sports (mini-basket)"
+]
 
 # -----------------------------------------
 class FileManagement:
@@ -68,10 +114,10 @@ class Agente:
         output = ""
         try:
             # log: crea file col prompt corrente (così puoi leggere l'ultimo avviato in "pi")
-            FileManagement.write_file(C_CURRENT_PROMPT, prompt)
+            FileManagement.write_file(str(C_PATH_FILE_CURRENT_PROMPT), prompt)
             comando = ["pi", "--no-session", "-p"]
             # Esegue il comando e cattura l'output
-            with open(C_CURRENT_PROMPT, "r", encoding="utf-8") as f_in:
+            with open(str(C_PATH_FILE_CURRENT_PROMPT), "r", encoding="utf-8") as f_in:
                 output = subprocess.run(
                     comando,
                     stdin=f_in,
@@ -121,7 +167,7 @@ class Log:
     def log(t) -> str:
         print(f"{t}")
         # La modalità 'a' crea il file se non esiste, altrimenti aggiunge in fondo
-        with open(C_LOG_FILE, "a", encoding="utf-8") as f:
+        with open(str(C_PATH_FILE_LOG), "a", encoding="utf-8") as f:
             f.write(t+"\n")
 
     @staticmethod
@@ -184,15 +230,61 @@ class Log:
         Log.log(err)
         Log.log("===========================")
 
+# sposto cartelle
+def process_workspaces():
+    source_dir = "/workspace"
+    dest_dir = "/workspace_metadati"
+
+    # Verifica che la cartella di origine esista
+    if not os.path.exists(source_dir):
+        print(f"Errore: La cartella di origine '{source_dir}' non esiste.")
+        return
+
+    # Crea la cartella di destinazione se non esiste già
+    os.makedirs(dest_dir, exist_ok=True)
+
+    # Itera sugli elementi presenti in /workspace
+    for entry in os.scandir(source_dir):
+        # Filtriamo solo le directory (escludiamo eventuali file isolati)
+        if entry.is_dir():
+            old_path = entry.path
+            original_name = entry.name
+
+            # 1. Calcola il timestamp corrente (es. 20260606_153045)
+            timestamp = datetime.datetime.now(ZoneInfo("Europe/Rome")).strftime("%Y%m%d_%H%M%S")
+
+            # 2. Crea il nuovo nome e il percorso di destinazione
+            new_name = f"{original_name}_{timestamp}"
+            dest_path = os.path.join(dest_dir, new_name)
+
+            try:
+                # 3. Sposta e rinomina la cartella nella destinazione
+                shutil.move(old_path, dest_path)
+                print(f"[SUCCESSO] '{original_name}' -> rinominata in '{new_name}' e spostata.")
+            except Exception as e:
+                print(f"[ERRORE] Impossibile spostare '{original_name}': {e}")
+                continue
+
+            # 4. Aspetta un secondo prima della prossima iterazione
+            time.sleep(1)
+
+#
+def recupera_genere_gioco():
+    # 1. Recupera il timestamp attuale come numero intero positivo (secondi dall'epoca Unix)
+    timestamp_attuale = int(time.time())
+    # 2. Calcola il modulo 12 per ottenere un numero compreso tra 0 e 11
+    indice = timestamp_attuale % len(C_GENERI_GIOCHI)
+    Log.msg(f"recupera_genere_gioco => indice: {indice} => genere scelto: {C_GENERI_GIOCHI[indice]}")
+    # 3. Recupera la voce del genere corrispondente all'indice
+    genere_selezionato = C_GENERI_GIOCHI[indice]
+    return genere_selezionato
 
 
 if __name__ == "__main__":
     try:
-        os.makedirs("metadati_loop", exist_ok=True)
-        if not os.path.exists(C_LOG_FILE):
-            Path(C_LOG_FILE).write_text("", encoding="utf-8")
-        if not os.path.exists(C_CURRENT_PROMPT):
-            Path(C_CURRENT_PROMPT).write_text("", encoding="utf-8")
+        CARTELLA_LAVORO = "/workspace"
+        C_PATH_FILE_LOG.touch(exist_ok=True)
+        C_PATH_FILE_CURRENT_PROMPT.touch(exist_ok=True)
 
         index = 0
         index_try = 0
@@ -202,8 +294,20 @@ if __name__ == "__main__":
                 exit(0)
             else:
                 Log.msg(f"Avvio task [task {index+1} di {C_INDEX}]")
+                
+            prompt_utente = C_PROMPT_UTENTE
 
-            output = Agente.run_pi(C_PROMPT_UTENTE)
+            if index_try == 0:
+                # sposto i progetti terminati
+                process_workspaces()
+                # nuovo
+                c_genere_gioco = recupera_genere_gioco()
+                prompt_utente = prompt_utente.replace("$C_PROMPT_UTENTE_CREA", C_PROMPT_UTENTE_CREA).replace("$C_GENERE_GIOCO", c_genere_gioco).replace("$C_INIT_OR_RECOVER", C_PROMPT_UTENTE_INIT)
+            else:
+                # recover
+                prompt_utente = prompt_utente.replace("$C_PROMPT_UTENTE_CREA", "").replace("$C_INIT_OR_RECOVER", C_PROMPT_UTENTE_RECOVER)
+
+            output = Agente.run_pi(prompt_utente, cartella=CARTELLA_LAVORO)
             if not output:
                 # ko (nessun progresso)
                 if index_try >= C_N_TRY:
@@ -215,6 +319,7 @@ if __name__ == "__main__":
             else:
                 Log.msg(f"[task {index+1} di {C_INDEX}] => terminato OK , passo al prossimo!")
                 index = index + 1
+                index_try = 0
 
     except KeyboardInterrupt:
         Log.msg("\nInterruzione (CTRL+C): Chiusura del programma in corso...")
