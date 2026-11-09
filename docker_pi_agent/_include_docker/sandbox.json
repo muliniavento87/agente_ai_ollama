@@ -1,4 +1,9 @@
 {
+  "enabled": true,
+  "allowRead": ["."],
   "allowWrite": ["."],
-  "denyWrite": []
+  "allowDelete": ["."],
+  "permissionPromptTimeoutSeconds": 1,
+  "OLDdenyWrite": [],
+  "OLDenableWeakerNestedSandbox": true
 }
