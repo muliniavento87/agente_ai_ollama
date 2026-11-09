@@ -6,5 +6,6 @@
     "httpIdleTimeoutMs": 0,
     "compaction": {
         "enabled": false
-    }
+    },
+    "extensions": ["-builtin:mcp"]
 }
