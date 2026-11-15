@@ -3,5 +3,13 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+*/venv/
+
 # macOS system files
 .DS_Store
+
+# buffer pi agent
+docker_pi_agent/_include_docker/docker_pi_agent/sessions
+docker_pi_agent/_include_docker/docker_pi_agent/skills
+
+p/

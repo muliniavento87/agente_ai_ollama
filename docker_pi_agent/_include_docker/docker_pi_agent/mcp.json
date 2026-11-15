@@ -1,0 +1,11 @@
+{
+    "settings": {
+        "directTools": true
+    },
+    "mcpServers": {
+        "miei-tool-python": {
+            "command": "/server_mcp/venv/bin/python",
+            "args": ["/server_mcp/server.py"]
+        }
+    }
+}

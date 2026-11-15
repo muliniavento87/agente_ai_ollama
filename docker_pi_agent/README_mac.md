@@ -23,11 +23,22 @@ docker exec -it pi-agent-dev bash
 ```bash
 colima start;
 
+$(
+cd docker_pi_agent;
 docker-compose up -d --build;
 docker exec -it pi-agent-dev bash
+)
 
+$(
+cd docker_pi_agent;
 docker-compose up -d;
 docker exec -it pi-agent-dev bash
+)
+
+$(
+cd docker_pi_agent;
+docker-compose down
+)
 
 pi --no-session
 

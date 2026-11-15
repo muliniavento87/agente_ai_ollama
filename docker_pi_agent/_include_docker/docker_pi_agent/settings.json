@@ -7,5 +7,8 @@
     "compaction": {
         "enabled": false
     },
-    "extensions": ["-builtin:mcp"]
+    "extensions": [
+        "-builtin:mcp"
+    ],
+    "lastChangelogVersion": "1.5.2"
 }
