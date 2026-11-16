@@ -8,21 +8,21 @@ services:
     image: ternary-bonsai/llama-server:prism-b10709-9a9394a
     environment:
       LLAMA_BIN: cuda
-      MODEL_REPO: prism-ml/Ternary-Bonsai-2-27B-gguf
-      MODEL_FILE: Ternary-Bonsai-2-27B-PTQ1_0.gguf
-      MODEL_MMPROJ: 0
-      MMPROJ_FILE: Ternary-Bonsai-2-27B-mmproj-Q8_0.gguf
-      # Ottimizzazione 8 GiB VRAM
+      # Selettore modelli Ternary Bonsai 2:
+      # 0 = Ternary-Bonsai-2-27B
+      # 1 = Ternary-Bonsai-2-9B
+      # 2 = Ternary-Bonsai-2-4B
+      MODELLO_ATTIVO: "2"
+      
+      # Ottimizzazione VRAM / Contesto
       LLAMA_CTX: 32768
       LLAMA_PRELOAD: 1
       LLAMA_PARALLEL: 1
-      # ctk => "MOLTO" sensibile alla variazione di quantizzazione tra q8_0 e q4_0
-      # (metti q8_0, variazione di circa 200mb su 32k contesto, ma la qualità sale molto su contesti lunghi)
       LLAMA_CACHE_TYPE_K: q8_0
-      # ctv => "POCO" sensibile alla variazione di quantizzazione tra q8_0 e q4_0 (lascia q4_0)
       LLAMA_CACHE_TYPE_V: q4_0
       LLAMA_NGL: 99
       LLAMA_FLASH_ATTN: "on"
+      
       # Sampling
       LLAMA_TEMP: 0.6
       LLAMA_TOP_P: 0.95
