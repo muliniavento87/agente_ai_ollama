@@ -1,14 +1,14 @@
 #!/bin/bash
 
-useradd -ms /bin/bash agent_user
-chown root:root /workspace_metadati && chmod 700 /workspace_metadati
-chown root:root /server_mcp && chmod 700 /server_mcp
-chown root:root /scripts && chmod 700 /scripts
-
-
 # ---------- Init ["Pi Agent"] configurazione ----------
-chmod +x /scripts/sh_include_init/init_pi_config.sh
-/scripts/sh_include_init/init_pi_config.sh
+if [ -d "/etc/.pi/agent/npm" ]; then
+    # cartella esiste
+    echo "Estensioni Pi Agent già installate."
+else
+    # installo estensioni
+    chmod +x /scripts/sh_include_init/init_pi_config.sh
+    /scripts/sh_include_init/init_pi_config.sh
+fi
 
 # ---------- Init ["Pi Agent"] mattpocock skills ----------
 # default => true
