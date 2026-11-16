@@ -11,4 +11,10 @@ ollama create Ornith-1.5-9b-Q4-K-M-32k -f Ornith-1.5-9b-Q4-K-M-32k
 ollama create Qwen3.6-35B-A3B-Q4-K-M-32k -f Qwen3.6-35B-A3B-Q4-K-M-32k
 # Saluki 27b IQ2 (contesto 32k) [derivato da Qwen 3.8 27b con quantizzazione particolare, buono ma un pò lento]
 ollama create Saluki-27b-IQ2-32k -f Saluki-27b-IQ2-32k
+# Qwen 3.8 Q4 27b (contesto 32k)
+ollama create qwen3.8-27b-q4_K_M -f qwen3.8-27b-q4_K_M
+# Qwen 3.8 Q4 27b (contesto 64k)
+ollama create qwen3.8-27b-q4_K_M-64k -f qwen3.8-27b-q4_K_M-64k
+# Qwen 3.8 Q4 27b (contesto 128k)
+ollama create qwen3.8-27b-q4_K_M-128k -f qwen3.8-27b-q4_K_M-128k
 ```

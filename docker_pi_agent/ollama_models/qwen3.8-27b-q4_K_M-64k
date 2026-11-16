@@ -1,0 +1,11 @@
+FROM qwen3.8:27b-q4_K_M
+# contesto e parametri di esecuzione
+PARAMETER num_ctx 65536
+PARAMETER num_predict 65536
+# parametri llm (ottimizzati per coding)
+PARAMETER temperature 0.6
+PARAMETER top_p 0.95
+PARAMETER top_k 20
+PARAMETER min_p 0.05
+
+# ollama create qwen3.8-27b-q4_K_M-64k -f qwen3.8-27b-q4_K_M-64k
