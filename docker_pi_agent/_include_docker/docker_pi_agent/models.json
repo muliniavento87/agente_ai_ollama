@@ -1,8 +1,9 @@
 {
     "providers": {
         "ollama": {
-            "old": "http://192.168.1.173:11434/v1",
-            "baseUrl": "http://host.docker.internal:11434/v1",
+            "baseUrl": "http://192.168.1.173:11434/v1",
+            "HOSTbaseUrl": "http://host.docker.internal:11434/v1",
+            "LOCALbaseUrl": "http://172.19.16.1:11434/v1",
             "api": "openai-completions",
             "apiKey": "ollama",
             "models": [
@@ -23,7 +24,6 @@
                     "maxTokens": 32768
                 },
                 {
-                    "old": "8192-32768",
                     "id": "Ornith-1.5-9b-Q4-K-M-32k",
                     "contextWindow": 32768,
                     "maxTokens": 32768
