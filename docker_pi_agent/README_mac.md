@@ -2,7 +2,10 @@
 - default
 ```bash
 colima start;
+$(
+cd docker_pi_agent;
 docker-compose up -d --build;
+)
 docker exec -it pi-agent-dev bash
 
 pi --no-session

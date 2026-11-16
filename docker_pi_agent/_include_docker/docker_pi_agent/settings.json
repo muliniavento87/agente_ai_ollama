@@ -23,10 +23,20 @@
     {
       "defaultModel": "qwen3.8-27b-q4_K_M-128k",
       "defaultProvider": "ollama"
+    },
+    {
+      "defaultModel": "Ternary-Bonsai-2-27B-PTQ1_0",
+      "defaultProvider": "llamacpp"
+    },
+    {
+      "defaultModel": "Ternary-Bonsai-2-4B-PTQ1_0",
+      "defaultProvider": "llamacpp"
     }
   ],
-  "defaultModel": "Qwen3.6-35B-A3B-NVFP4",
-  "defaultProvider": "freetoken",
+  "OLDdefaultModel": "Qwen3.6-35B-A3B-NVFP4",
+  "OLDdefaultProvider": "freetoken",
+  "defaultModel": "Ternary-Bonsai-2-4B-PTQ1_0",
+  "defaultProvider": "llamacpp",
   "httpIdleTimeoutMs": 0,
   "compaction": {
     "enabled": false

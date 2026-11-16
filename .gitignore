@@ -13,3 +13,6 @@ docker_pi_agent/_include_docker/docker_pi_agent/sessions
 docker_pi_agent/_include_docker/docker_pi_agent/skills
 
 p/
+
+# models llm
+models/

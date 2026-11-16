@@ -78,6 +78,25 @@
                     "input": ["text", "image"]
                 }
             ]
+        },
+        "llamacpp": {
+            "baseUrl": "http://host.docker.internal:8080/v1",
+            "api": "openai-completions",
+            "apiKey": "dummy-key",
+            "models": [
+                {
+                    "id": "Ternary-Bonsai-2-27B-PTQ1_0",
+                    "contextWindow": 32768,
+                    "maxTokens": 32768,
+                    "input": ["text"]
+                },
+                {
+                    "id": "Ternary-Bonsai-2-4B-PTQ1_0",
+                    "contextWindow": 32768,
+                    "maxTokens": 32768,
+                    "input": ["text"]
+                }
+            ]
         }
     }
 }
