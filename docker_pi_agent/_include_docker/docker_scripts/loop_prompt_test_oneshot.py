@@ -47,16 +47,6 @@ class FileManagement:
 # -----------------------------------------
 class Agente:
     V_SIMULAZIONE = False
-
-    @staticmethod
-    def demote(user_name):
-        #Funzione di supporto per abbassare i privilegi dell'utente a runtime
-        def result():
-            pw = pwd.getpwnam(user_name)
-            # Imposta prima il GID e poi l'UID per motivi di sicurezza
-            os.setgid(pw.pw_gid)
-            os.setuid(pw.pw_uid)
-        return result
     
     @staticmethod
     def run_pi(prompt, cartella="."):
@@ -79,8 +69,7 @@ class Agente:
                     stdout=subprocess.PIPE,
                     stderr=subprocess.PIPE,
                     text=True,
-                    check=True,
-                    preexec_fn=Agente.demote("agent_user") # <-- QUI AVVIENE IL CAMBIO DI UTENTE
+                    check=True
                 )
             output = output.stdout
             return output
