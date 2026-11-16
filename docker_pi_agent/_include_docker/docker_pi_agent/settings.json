@@ -1,6 +1,30 @@
 {
-    "OLDdefaultModel": "Ornith-1.5-9b-Q4-K-M-32k",
-    "OLDdefaultProvider": "ollama",
+    "OLD": [
+        {
+            "defaultModel": "Ornith-1.5-9b-Q4-K-M-32k",
+            "defaultProvider": "ollama"
+        },
+        {
+            "defaultModel": "Qwen3.6-35B-A3B-Q4-K-M-32k",
+            "defaultProvider": "ollama"
+        },
+        {
+            "defaultModel": "edge0-35b",
+            "defaultProvider": "edge0"
+        },
+        {
+            "defaultModel": "qwen3.8-27b-q4_K_M-64k",
+            "defaultProvider": "ollama"
+        },
+        {
+            "defaultModel": "Qwen3.6-35B-A3B-NVFP4",
+            "defaultProvider": "freetoken"
+        },
+        {
+            "defaultModel": "qwen3.8-27b-q4_K_M-128k",
+            "defaultProvider": "ollama"
+        }
+    ],
     "defaultModel": "edge0-35b",
     "defaultProvider": "edge0",
     "httpIdleTimeoutMs": 0,
