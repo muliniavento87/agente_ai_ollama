@@ -14,8 +14,11 @@ docker-compose up -d; docker exec -it pi-agent-dev bash -c 'pi --no-session'
 ```
 - restart
 ```bash
+$(
+cd docker_pi_agent;
 docker-compose down;
 docker-compose up -d --build;
+)
 docker exec -it pi-agent-dev bash
 ```
 
@@ -26,14 +29,14 @@ colima start;
 $(
 cd docker_pi_agent;
 docker-compose up -d --build;
-docker exec -it pi-agent-dev bash
 )
+docker exec -it pi-agent-dev bash
 
 $(
 cd docker_pi_agent;
 docker-compose up -d;
-docker exec -it pi-agent-dev bash
 )
+docker exec -it pi-agent-dev bash
 
 $(
 cd docker_pi_agent;

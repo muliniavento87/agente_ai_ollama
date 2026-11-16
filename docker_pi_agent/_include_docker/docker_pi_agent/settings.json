@@ -37,7 +37,8 @@
   "lastChangelogVersion": "1.5.2",
   "packages": [
     "https://github.com/gsanhueza/pi-token-speed",
-    "npm:pi-atelier"
+    "npm:pi-atelier",
+    "npm:pi-mcp-extension"
   ],
   "extensionChangelogVersions": {
     "{\"source\":\"npm:pi-atelier\",\"scope\":\"user\"}": "0.20.0"
