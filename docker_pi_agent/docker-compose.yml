@@ -19,6 +19,7 @@ services:
       #  target: /init.sh
       # bind CARTELLE
       - ./docker_workspace:/workspace
+      - ./_include_docker/docker_workspace_metadati:/workspace_metadati
       - ./_include_docker/docker_pi_agent:/etc/.pi/agent
     extra_hosts:
       - "host.docker.internal:host-gateway"
