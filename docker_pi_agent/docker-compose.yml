@@ -22,14 +22,14 @@ services:
       - ./_include_docker/docker_workspace_metadati:/workspace_metadati
       - ./_include_docker/docker_scripts:/scripts
       - ./_include_docker/docker_server_mcp:/server_mcp
-      - ./_include_docker/docker_pi_agent:/etc/.pi/agent
     extra_hosts:
       - "host.docker.internal:host-gateway"
     environment:
-      - PI_CODING_AGENT_DIR=/etc/.pi/agent
       # di default scarica le skills SOLO la prima volta (se vuoi forzarlo a riscaricarle, es. per update, metti "true")
       - FORCE_DOWNLOAD_MATTPOCOCK_SKILLS=false
       # basta modificare l'indirizzo OLLAMA in Dockerfile "baseUrl"
       - http://host.docker.internal:11434
     stdin_open: true
     tty: true
+volumes:
+  pi_agent_data:
