@@ -25,46 +25,21 @@ RUN python3 -m pip install --no-cache-dir --break-system-packages -U \
 # Installazione globale di Pi Agent[cite: 1]
 RUN npm install -g --unsafe-perm --ignore-scripts @earendil-works/pi-coding-agent
 
-# configurazione scripts python
-#   1. Le cartelle non esistono ancora, le creiamo vuote
-RUN mkdir -p /workspace_metadati /server_mcp /scripts
-#   2. copiamo il contenuto
-COPY _include_docker/docker_scripts /scripts
-COPY _include_docker/docker_server_mcp /server_mcp
-COPY _include_docker/docker_workspace_metadati /workspace_metadati
-
-
 # 4070  172.19.16.1
 # 5050  172.22.16.1
-
-
-# (Pi Agent) plugin:
-#   - mostra token al secondo
-#    pi install https://github.com/gsanhueza/pi-token-speed
-#   - pi-atelier (dashboard con tante informazioni dettagliate, automatico)
-#    pi install npm:pi-atelier
-#   - pi-web-access (recupera info da internet, in autonomia se serve)
-#    pi install npm:pi-web-access
-#   - pi-hermes-memory (salva uno storico dei contenuti chat in database 
-#    pi install npm:pi-hermes-memory
-#   - context-mode (gestione contesto, in automatico riduce l'occupazione)
-#    pi install npm:context-mode
-RUN pi install https://github.com/gsanhueza/pi-token-speed && \
-    pi install npm:pi-atelier && \
-    # pi install npm:pi-sandbox && \
-    pi install npm:pi-mcp-extension
 
 # Preconfigurazione di Git a livello di sistema (valida per root e agent_user)
 RUN git config --system --add safe.directory '*' && \
     git config --system user.name "Pi Agent" && \
     git config --system user.email "pi-agent@local.dev"
 
+COPY _include_docker/init.sh /init.sh
+
 # abilito avvio scripts
-RUN chmod +x /scripts/init.sh
+RUN chmod +x /init.sh
 
 # Imposta l'entrypoint
-ENTRYPOINT ["/scripts/init.sh"]
-#ENTRYPOINT ["/scripts/init_pi_config.sh"]
+ENTRYPOINT ["/init.sh"]
 
 # WORKDIR /scripts
 WORKDIR /workspace
