@@ -1,38 +1,45 @@
 {
-    "OLD": [
-        {
-            "defaultModel": "Ornith-1.5-9b-Q4-K-M-32k",
-            "defaultProvider": "ollama"
-        },
-        {
-            "defaultModel": "Qwen3.6-35B-A3B-Q4-K-M-32k",
-            "defaultProvider": "ollama"
-        },
-        {
-            "defaultModel": "edge0-35b",
-            "defaultProvider": "edge0"
-        },
-        {
-            "defaultModel": "qwen3.8-27b-q4_K_M-64k",
-            "defaultProvider": "ollama"
-        },
-        {
-            "defaultModel": "Qwen3.6-35B-A3B-NVFP4",
-            "defaultProvider": "freetoken"
-        },
-        {
-            "defaultModel": "qwen3.8-27b-q4_K_M-128k",
-            "defaultProvider": "ollama"
-        }
-    ],
-    "defaultModel": "edge0-35b",
-    "defaultProvider": "edge0",
-    "httpIdleTimeoutMs": 0,
-    "compaction": {
-        "enabled": false
+  "OLD": [
+    {
+      "defaultModel": "Ornith-1.5-9b-Q4-K-M-32k",
+      "defaultProvider": "ollama"
     },
-    "extensions": [
-        "-builtin:mcp"
-    ],
-    "lastChangelogVersion": "1.5.2"
+    {
+      "defaultModel": "Qwen3.6-35B-A3B-Q4-K-M-32k",
+      "defaultProvider": "ollama"
+    },
+    {
+      "defaultModel": "edge0-35b",
+      "defaultProvider": "edge0"
+    },
+    {
+      "defaultModel": "qwen3.8-27b-q4_K_M-64k",
+      "defaultProvider": "ollama"
+    },
+    {
+      "defaultModel": "Qwen3.6-35B-A3B-NVFP4",
+      "defaultProvider": "freetoken"
+    },
+    {
+      "defaultModel": "qwen3.8-27b-q4_K_M-128k",
+      "defaultProvider": "ollama"
+    }
+  ],
+  "defaultModel": "Qwen3.6-35B-A3B-NVFP4",
+  "defaultProvider": "freetoken",
+  "httpIdleTimeoutMs": 0,
+  "compaction": {
+    "enabled": false
+  },
+  "extensions": [
+    "-builtin:mcp"
+  ],
+  "lastChangelogVersion": "1.5.2",
+  "packages": [
+    "https://github.com/gsanhueza/pi-token-speed",
+    "npm:pi-atelier"
+  ],
+  "extensionChangelogVersions": {
+    "{\"source\":\"npm:pi-atelier\",\"scope\":\"user\"}": "0.20.0"
+  }
 }
